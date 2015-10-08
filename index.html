@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link href="reset.css" rel="stylesheet" type="text/css" />
+		<link href="style.css" rel="stylesheet" type="text/css" />
+		<link href='http://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+		<title>co-health</title>
+		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	</head>
+	<body>	
+		<nav>
+			<a href="simplon.co"><img src="img/LOGO.png" alt="logo co health" title="logo"/></a>
+			 <!--   <span><h1>Hôpital de la Salpêtrière</h1></span>  -->
+		</nav>
+		<section>
+
+				<button id='btn'>OK</button>
+			<ul id="liste">
+		    		<!--<li><a href="#"><span></span></a><a href="p2.html"><h2>Alerte !</h2></a><a href="#"></a></li>-->
+			</ul>
+		</section>
+
+
+		<script>
+
+				$( "#btn" ).click(function() {
+
+							console.log('dcsdkckdckdjc');
+
+			        // post message
+			   var url = "https://dweet.io:443/dweet/for/cohealth";
+			        $.ajax(
+			     {
+			       url: url,
+			       type: 'json',
+			       method: 'POST',
+			     //  contentType: 'application/json',
+			       data: {"message": "alerte depuis la montre", "id": "kenams",},
+			      // crossDomain: true
+			     }
+			    /* function(json) {
+			       main.body("alerte envoyée");
+			       console.log(JSON.stringify(json));
+			       console.log('ok');
+			     },
+			     function(error) {
+			       console.log('Ajax failed: ' + error);
+			     } */
+			   );
+
+			 });
+
+
+
+		//****************************************************************************
+
+		
+			var datelastdweet = 0;
+
+			function recup() {
+		           $.ajax({
+                		  url : "https://dweet.io:443/get/latest/dweet/for/cohealth",
+		                  type: "GET",
+		                  dataType: "json",
+        		          success : function(response, statut) {                       
+					console.log(response);                       
+					var dweet = response.with[0].content;
+        		              	//dweet.gps
+        		              	//dweet.id
+        		        	//dweet.message
+        		        	var datedweet = response.with[0].created;
+						
+					//cas init 
+					if(datelastdweet == 0){
+						datelastdweet = datedweet;
+					}
+
+
+					if ( datedweet!= datelastdweet) {
+						console.log("nouveau message");
+        		                  var msg = dweet.id +" a déclenché une " + dweet.message + " depuis la position : " + dweet.gps;
+				/*	  var linkgmaps = "http://maps.google.com/maps?q=alerte+%40"+dweet.gps;
+					  var html = '<li><a target="_blank" href="'+linkgmaps+'"><span></span></a><a target="_blank" href="'+linkgmaps+'"><h2>Alerte !</h2></a><a target="_blank" href="'+linkgmaps+'"><p>'+msg+'</p></a></li>'; */
+					  $("#liste").append(html);
+        		                  datelastdweet = datedweet;
+                      			};                   
+				}
+           		  });
+       			}
+
+			$(document).ready(function(){
+				setInterval(recup, 2000);
+
+				recup(); // permet d'initialiser datelastdweet
+			});
+
+		</script>
+</body>
+</html>
